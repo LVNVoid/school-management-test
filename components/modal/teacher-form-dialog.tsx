@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import toast from 'react-hot-toast';
 
 type TeacherFormDialogProps = {
   mode: 'create' | 'edit';
@@ -41,12 +42,21 @@ export default function TeacherFormDialog({
 
   const handleSubmit = (formData: FormData) => {
     startTransition(async () => {
+      let result;
       if (mode === 'create') {
-        await createTeacher(formData);
+        result = await createTeacher(formData);
       } else if (mode === 'edit' && initialData) {
-        await updateTeacher(initialData.id, formData);
+        result = await updateTeacher(initialData.id, formData);
       }
-      setOpen(false);
+
+      if (result) {
+        if (result.success) {
+          toast.success(result.message);
+          setOpen(false);
+        } else {
+          toast.error(result.message);
+        }
+      }
     });
   };
 

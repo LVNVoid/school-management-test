@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { createClass, updateClass } from '@/actions/class';
 import { Pen } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 type ClassFormDialogProps = {
   mode: 'create' | 'edit';
@@ -31,12 +32,21 @@ export default function ClassFormDialog({
 
   const handleSubmit = (formData: FormData) => {
     startTransition(async () => {
+      let result;
       if (mode === 'create') {
-        await createClass(formData);
+        result = await createClass(formData);
       } else if (mode === 'edit' && initialData) {
-        await updateClass(initialData.id, formData);
+        result = await updateClass(initialData.id, formData);
       }
-      setOpen(false);
+
+      if (result) {
+        if (result.success) {
+          toast.success(result.message);
+          setOpen(false);
+        } else {
+          toast.error(result.message);
+        }
+      }
     });
   };
 

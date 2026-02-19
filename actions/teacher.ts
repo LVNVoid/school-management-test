@@ -15,31 +15,54 @@ export async function createTeacher(formData: FormData) {
   const name = formData.get('name') as string;
   const classId = Number(formData.get('classId'));
 
-  await prisma.teacher.create({
-    data: { name, classId },
-  });
+  try {
+    const existingTeacher = await prisma.teacher.findFirst({
+        where: { name, classId }
+    });
 
-  revalidatePath('/dashboard/teachers');
+    if (existingTeacher) {
+        return { success: false, message: 'Guru sudah ada di kelas ini' };
+    }
+
+    await prisma.teacher.create({
+      data: { name, classId },
+    });
+
+    revalidatePath('/dashboard/teachers');
+    return { success: true, message: 'Guru berhasil ditambahkan' };
+  } catch (error) {
+    return { success: false, message: 'Gagal menambahkan guru' };
+  }
 }
 
 export async function updateTeacher(id: number, formData: FormData) {
   const name = formData.get('name') as string;
   const classId = Number(formData.get('classId'));
 
-  await prisma.teacher.update({
-    where: { id },
-    data: { name, classId },
-  });
+  try {
+    await prisma.teacher.update({
+      where: { id },
+      data: { name, classId },
+    });
 
-  revalidatePath('/dashboard/teachers');
+    revalidatePath('/dashboard/teachers');
+    return { success: true, message: 'Data guru berhasil diperbarui' };
+  } catch (error) {
+    return { success: false, message: 'Gagal memperbarui data guru' };
+  }
 }
 
 export async function deleteTeacher(formData: FormData) {
   const id = Number(formData.get('id'));
 
-  await prisma.teacher.delete({
-    where: { id },
-  });
+  try {
+    await prisma.teacher.delete({
+      where: { id },
+    });
 
-  revalidatePath('/dashboard/teachers');
+    revalidatePath('/dashboard/teachers');
+    return { success: true, message: 'Data guru berhasil dihapus' };
+  } catch (error) {
+    return { success: false, message: 'Gagal menghapus data guru' };
+  }
 }
