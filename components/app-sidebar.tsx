@@ -1,0 +1,64 @@
+import {
+  Users,
+  GraduationCap,
+  School,
+  LayoutDashboard,
+  FileText,
+  LogOut,
+} from 'lucide-react';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarFooter,
+} from '@/components/ui/sidebar';
+import { logout } from '@/actions/auth';
+
+const items = [
+  { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
+  { title: 'Kelas', url: '/dashboard/classes', icon: School },
+  { title: 'Siswa', url: '/dashboard/students', icon: GraduationCap },
+  { title: 'Guru', url: '/dashboard/teachers', icon: Users },
+  { title: 'Laporan', url: '/dashboard/reports', icon: FileText },
+];
+
+export function AppSidebar() {
+  return (
+    <Sidebar>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-xl font-bold px-4 py-6">
+            School Management
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {items.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <a href={item.url}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+      <SidebarFooter className="p-4 border-t">
+        <form action={logout}>
+          <button className="flex items-center gap-2 text-red-500 hover:text-red-700 w-full">
+            <LogOut size={18} />
+            <span className="font-medium">Keluar</span>
+          </button>
+        </form>
+      </SidebarFooter>
+    </Sidebar>
+  );
+}
