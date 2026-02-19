@@ -11,15 +11,31 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { createClass } from '@/actions/class';
+import { createClass, updateClass } from '@/actions/class';
+import { Pen } from 'lucide-react';
 
-export default function AddClassDialog() {
+type ClassFormDialogProps = {
+  mode: 'create' | 'edit';
+  initialData?: {
+    id: number;
+    name: string;
+  };
+};
+
+export default function ClassFormDialog({
+  mode,
+  initialData,
+}: ClassFormDialogProps) {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   const handleSubmit = (formData: FormData) => {
     startTransition(async () => {
-      await createClass(formData);
+      if (mode === 'create') {
+        await createClass(formData);
+      } else if (mode === 'edit' && initialData) {
+        await updateClass(initialData.id, formData);
+      }
       setOpen(false);
     });
   };
@@ -27,12 +43,16 @@ export default function AddClassDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>Tambah Kelas</Button>
+        <Button variant="outline">
+          {mode === 'create' ? 'Tambah Kelas' : <Pen />}
+        </Button>
       </DialogTrigger>
 
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Tambah Data Kelas</DialogTitle>
+          <DialogTitle>
+            {mode === 'create' ? 'Tambah Data Kelas' : 'Edit Data Kelas'}
+          </DialogTitle>
         </DialogHeader>
 
         <form action={handleSubmit} className="space-y-4">
@@ -41,13 +61,18 @@ export default function AddClassDialog() {
             <Input
               id="name"
               name="name"
+              defaultValue={initialData?.name}
               placeholder="Masukkan nama kelas"
               required
             />
           </div>
 
           <Button type="submit" disabled={isPending} className="w-full">
-            {isPending ? 'Menyimpan...' : 'Simpan'}
+            {isPending
+              ? 'Menyimpan...'
+              : mode === 'create'
+                ? 'Simpan'
+                : 'Update'}
           </Button>
         </form>
       </DialogContent>

@@ -18,6 +18,7 @@ import {
   SidebarFooter,
 } from '@/components/ui/sidebar';
 import { logout } from '@/actions/auth';
+import Link from 'next/link';
 
 const items = [
   { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
@@ -40,10 +41,10 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
