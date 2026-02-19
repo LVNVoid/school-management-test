@@ -3,7 +3,6 @@ import {
   GraduationCap,
   School,
   LayoutDashboard,
-  FileText,
   LogOut,
 } from 'lucide-react';
 import {
@@ -25,7 +24,6 @@ const items = [
   { title: 'Kelas', url: '/dashboard/classes', icon: School },
   { title: 'Siswa', url: '/dashboard/students', icon: GraduationCap },
   { title: 'Guru', url: '/dashboard/teachers', icon: Users },
-  { title: 'Laporan', url: '/dashboard/reports', icon: FileText },
 ];
 
 export function AppSidebar() {
