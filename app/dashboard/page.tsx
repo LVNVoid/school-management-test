@@ -1,5 +1,3 @@
-
-import prisma from '@/lib/prisma';
 import {
   Table,
   TableBody,
@@ -16,17 +14,14 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { getDashboardClasses, getDashboardParents } from '@/actions/dashboard';
 
 export default async function DashboardPage() {
-  const classes = await prisma.class.findMany({
-    include: {
-      students: true,
-      teachers: true,
-    },
-    orderBy: {
-      name: 'asc',
-    },
-  });
+
+  const [classes, parents] = await Promise.all([
+    getDashboardClasses(),
+    getDashboardParents(),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -50,7 +45,7 @@ export default async function DashboardPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[200px] font-bold text-foreground">
+                  <TableHead className="w-50 font-bold text-foreground">
                     Nama Kelas
                   </TableHead>
                   <TableHead className="font-bold text-foreground">
@@ -68,10 +63,7 @@ export default async function DashboardPage() {
                       {cls.students.length > 0 ? (
                         <div className="flex flex-wrap gap-2">
                           {cls.students.map((student) => (
-                            <Badge
-                              variant="secondary"
-                              key={student.id}
-                            >
+                            <Badge variant="secondary" key={student.id}>
                               {student.name}
                             </Badge>
                           ))}
@@ -113,7 +105,7 @@ export default async function DashboardPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[200px] font-bold text-foreground">
+                  <TableHead className="w-50 font-bold text-foreground">
                     Nama Kelas
                   </TableHead>
                   <TableHead className="font-bold text-foreground">
@@ -173,7 +165,7 @@ export default async function DashboardPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[150px] font-bold text-foreground">
+                  <TableHead className="w-37.5 font-bold text-foreground">
                     Nama Kelas
                   </TableHead>
                   <TableHead className="font-bold text-foreground">
@@ -229,6 +221,66 @@ export default async function DashboardPage() {
                       className="h-24 text-center text-muted-foreground"
                     >
                       Tidak ada data siswa dan guru.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* List Orang Tua */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Daftar Orang Tua</CardTitle>
+          <CardDescription>
+            Informasi orang tua beserta nama siswa dan kelas.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="font-bold text-foreground">Nama Orang Tua</TableHead>
+                  <TableHead className="font-bold text-foreground">Nama Siswa</TableHead>
+                  <TableHead className="font-bold text-foreground">Kelas</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {parents.map((parent) => (
+                  <TableRow key={parent.id} className="hover:bg-muted/5">
+                    <TableCell className="font-medium align-top py-4">
+                      {parent.name}
+                    </TableCell>
+                    <TableCell className="align-top py-4">
+                      {parent.student ? (
+                        <span className="text-sm">{parent.student.name}</span>
+                      ) : (
+                        <span className="text-muted-foreground italic text-sm">
+                          Belum ada siswa
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell className="align-top py-4">
+                      {parent.student?.class ? (
+                        <Badge variant="outline">{parent.student.class.name}</Badge>
+                      ) : (
+                        <span className="text-muted-foreground italic text-sm">
+                          —
+                        </span>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {parents.length === 0 && (
+                  <TableRow>
+                    <TableCell
+                      colSpan={3}
+                      className="h-24 text-center text-muted-foreground"
+                    >
+                      Tidak ada data orang tua.
                     </TableCell>
                   </TableRow>
                 )}

@@ -27,6 +27,16 @@ model Class {
   updatedAt DateTime @updatedAt
 }
 
+model Parent {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student Student?
+}
+
 model Student {
   id        Int      @id @default(autoincrement())
   name      String
@@ -35,6 +45,9 @@ model Student {
 
   classId Int
   class   Class @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  parent   Parent? @relation(fields: [parentId], references: [id])
+  parentId Int?    @unique
 }
 
 model Teacher {

@@ -14,8 +14,10 @@ import {
 import { Trash2 } from 'lucide-react';
 
 export default async function StudentPage() {
-    const students = await getStudents();
-    const classes = await getClasses();
+    const [students, classes] = await Promise.all([
+        getStudents(),
+        getClasses(),
+    ]);
 
     return (
         <div className="space-y-6">

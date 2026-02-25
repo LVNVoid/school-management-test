@@ -5,9 +5,20 @@ import bcrypt from 'bcryptjs';
 import { redirect } from 'next/navigation';
 import { createSession, deleteSession } from '@/lib/session';
 
-export async function login(prevState: any, formData: FormData) {
+type AuthState = {
+  error?: string;
+};
+
+export async function login(
+  prevState: AuthState,
+  formData: FormData,
+): Promise<AuthState> {
   const username = formData.get('username') as string;
   const password = formData.get('password') as string;
+
+  if (!username || !password) {
+    return { error: 'Semua field wajib diisi' };
+  }
 
   const user = await prisma.user.findUnique({ where: { username } });
 
@@ -19,7 +30,11 @@ export async function login(prevState: any, formData: FormData) {
 
   redirect('/dashboard');
 }
-export async function register(prevState: any, formData: FormData) {
+
+export async function register(
+  prevState: AuthState,
+  formData: FormData,
+): Promise<AuthState> {
   const name = formData.get('name') as string;
   const username = formData.get('username') as string;
   const password = formData.get('password') as string;

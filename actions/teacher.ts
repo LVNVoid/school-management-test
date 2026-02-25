@@ -17,11 +17,11 @@ export async function createTeacher(formData: FormData) {
 
   try {
     const existingTeacher = await prisma.teacher.findFirst({
-        where: { name, classId }
+      where: { name, classId },
     });
 
     if (existingTeacher) {
-        return { success: false, message: 'Guru sudah ada di kelas ini' };
+      return { success: false, message: 'Guru sudah ada di kelas ini' };
     }
 
     await prisma.teacher.create({

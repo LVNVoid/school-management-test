@@ -11,17 +11,37 @@ export async function getStudents() {
   });
 }
 
+export async function getStudentsName() {
+  return await prisma.student.findMany({
+    select: {
+      id: true,
+      name: true,
+    },
+  });
+}
+
+export async function getStudentsWithoutParent() {
+  return await prisma.student.findMany({
+    where: { parent: null },
+    select: {
+      id: true,
+      name: true,
+    },
+    orderBy: { name: 'asc' },
+  });
+}
+
 export async function createStudent(formData: FormData) {
   const name = formData.get('name') as string;
   const classId = Number(formData.get('classId'));
 
   try {
     const existingStudent = await prisma.student.findFirst({
-        where: { name, classId }
+      where: { name, classId },
     });
 
     if (existingStudent) {
-        return { success: false, message: 'Siswa sudah ada di kelas ini' };
+      return { success: false, message: 'Siswa sudah ada di kelas ini' };
     }
 
     await prisma.student.create({
@@ -31,6 +51,7 @@ export async function createStudent(formData: FormData) {
     revalidatePath('/dashboard/students');
     return { success: true, message: 'Siswa berhasil ditambahkan' };
   } catch (error) {
+    console.error(error);
     return { success: false, message: 'Gagal menambahkan siswa' };
   }
 }

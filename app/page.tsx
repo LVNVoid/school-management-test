@@ -1,14 +1,5 @@
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
-const RootPage = () => {
-  return (
-    <div className="flex min-h-screen items-center justify-center">
-      <Link href="/dashboard">
-        <Button>Go to dashboard</Button>
-      </Link>
-    </div>
-  );
-};
-
-export default RootPage;
+export default function Home() {
+  redirect('/dashboard');
+}
